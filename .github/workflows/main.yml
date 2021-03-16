@@ -1,0 +1,49 @@
+
+      
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+  
+jobs:
+  # This workflow contains a single job called "deploy-lambda"
+   deploy-lambda:
+   
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@master
+    
+        
+    #credentials to connect to AWS
+    - name: Configure AWS credentials from Test account
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+        #project_name: <your project name>
+        #runtime: python3.8
+        #s3_bucket: <your bucket name>
+    
+    # Runs a set of commands using the runners shell
+    - name: Zip all files together
+      run: |
+        #zip files into current directory
+         zip -r src-helpdesk-business-hours-api.zip
+
+        
+    
+    #Deploy main.py to AWS
+    - name: AWS Lambda Deploy
+      uses: utdal/lambda-action@v0.0.4
+      with:
+            #name of my AWS Lambda Function
+            function_name: hours-of-operation-tool
+            #contains all the files in my github repository
+            zip_file: zip -r src-helpdesk-business-hours-api.zip
