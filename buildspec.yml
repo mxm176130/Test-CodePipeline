@@ -9,7 +9,7 @@ phases:
     commands:
       - echo "Zipping deployment package..."
       - zip -r9 ../src-helpdesk-business-hours-api.zip .
-      - zip -g src-helpdesk-business-hours-api.zip 
+      - zip -g src-helpdesk-business-hours-api.zip *.py 
   post_build:
     commands:
       - echo "Updating lambda Function..."
